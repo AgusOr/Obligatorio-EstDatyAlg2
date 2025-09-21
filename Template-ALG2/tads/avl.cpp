@@ -2,6 +2,7 @@
 #include <assert.h>
 #include "abb.cpp"
 #include <stdexcept>
+#include <string>
 
 template <class T>
 class avl : public bst<T>
@@ -10,13 +11,13 @@ private:
   struct avl_node
   {
     T ID;
-    string nombre;
+    std::string nombre;
     int puntaje;
     int height = 1;
-    avl_node *left = nullptr;
-    avl_node *right = nullptr;
+    avl_node *left = NULL;
+    avl_node *right = NULL;
 
-    avl_node(T ID, string nombre = "", int puntaje = 0)
+    avl_node(T ID, std::string nombre = "", int puntaje = 0)
     {
       this->ID = ID;
       this->nombre = nombre;
@@ -38,7 +39,7 @@ private:
 
   int height(avl_node *n)
   {
-    if (n == nullptr)
+    if (n == NULL)
     {
       return 0;
     }
@@ -48,9 +49,9 @@ private:
 
   T minNode(avl_node *n)
   {
-    assert(n != nullptr);
+    assert(n != NULL);
 
-    if (n->left != nullptr)
+    if (n->left != NULL)
     {
       return minNode(n->left);
     }
@@ -62,9 +63,9 @@ private:
 
   T maxNode(avl_node *n)
   {
-    assert(n != nullptr);
+    assert(n != NULL);
 
-    if (n->right != nullptr)
+    if (n->right != NULL)
     {
       return maxNode(n->right);
     }
@@ -148,25 +149,21 @@ private:
     return n;
   }
 
-  avl_node *insertID(T ID,string nombre, int puntaje avl_node *n) override
+  avl_node *insertID(T ID,std::string nombre, int puntaje, avl_node *n)
   {
-    if(contains(ID)){
-      return;
-    }
-
-    if (n == nullptr)
+    if (n == NULL)
     {
       this->count++;
-      return new avl_node(ID);
+      return new avl_node(ID, nombre, puntaje);
     }
 
     if (ID < n->ID)
     {
-      n->left = insertID(ID, n->left);
+      n->left = insertID(ID, nombre, puntaje,n->left);
     }
     else if (ID > n->ID)
     {
-      n->right = insertID(ID, n->right);
+      n->right = insertID(ID,nombre,puntaje, n->right);
     }
 
     n->height = 1 + max(height(n->left), height(n->right));
@@ -175,7 +172,7 @@ private:
   }
 
   bool contains(T ID, avl_node *n){
-    if (n == nullptr)
+    if (n == NULL)
     {
       return false;
     }
@@ -198,20 +195,32 @@ private:
     assert(false);
   }
 
-  virtual void RANK(int puntaje) override
-  {
-    // TODO Auto-generated method stub
-  }
-  virtual void TOP1() override  
-  {
-    // TODO Auto-generated method stub
+    std::string encontrar(T ID, avl_node *n){
+    if (n == NULL)
+    {
+      return "jugador_no_encontrado";
+    }
+
+    if (ID == n->ID)
+    {
+      return n->nombre + " " + std::to_string(n->puntaje);
+    }
+
+    if (ID < n->ID)
+    {
+      return encontrar(ID, n->left);
+    }
+    else if (ID > n->ID)
+    {
+      return encontrar(ID, n->right);
+    }
   }
 
 public:
   avl(){
-    this->root = nullptr;
+    this->root = NULL;
   }
-  virtual void insert(T ID,string nombre,int puntaje) override
+  virtual void insert(T ID,std::string nombre,int puntaje) override
   {
     this->root = insertID(ID,nombre, puntaje, this->root);
   } 
@@ -236,6 +245,10 @@ public:
     return contains(ID, this->root);
   }
 
+  virtual std::string FIND(T ID) {
+    return encontrar(ID, this->root);
+  }
+
   virtual T get(T ID) override
   {
     // TODO Auto-generated method stub
@@ -250,13 +263,5 @@ public:
   {
     return maxNode(this->root);
   }
-  
-  virtual void RANK(int puntaje) override
-  {
-    // TODO Auto-generated method stub
-  }
-  virtual void TOP1() override
-  {
-    // TODO Auto-generated method stub
-  }
+
 };

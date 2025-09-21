@@ -2,6 +2,7 @@
 #include <assert.h>
 #include "abbPuntaje.cpp"
 #include <stdexcept>
+#include <string>
 
 template <class T>
 class avlPuntaje : public bstPuntaje<T>
@@ -10,13 +11,14 @@ private:
   struct avl_node
   {
     T puntaje;
-    string nombre;
+    std::string nombre;
     int ID;
     int height = 1;
+    int cantSubarbol = 1;
     avl_node *left = nullptr;
     avl_node *right = nullptr;
 
-    avl_node(T puntaje, string nombre = "", int ID = 0)
+    avl_node(T puntaje, std::string nombre = "", int ID = 0)
     {
       this->puntaje = puntaje;
       this->nombre = nombre;
@@ -26,11 +28,6 @@ private:
   avl_node *maxNodePtr = nullptr; 
   avl_node *root;
   int count = 0;
-
-  struct maxPuntaje{
-    string nombre;
-    int puntaje;
-  }
 
   int max(int a, int b)
   {
@@ -75,7 +72,7 @@ private:
     }
     else
     {
-      return n;
+      return n->puntaje;
     }
   }
 
@@ -88,7 +85,7 @@ private:
 
     z->height = 1 + max(height(z->left), height(z->right));
     y->height = 1 + max(height(y->left), height(y->right));
-
+    
     return y;
   }
 
@@ -153,16 +150,13 @@ private:
     return n;
   }
 
-  avl_node *insertP(T puntaje,string nombre, int ID avl_node *n) override
+  avl_node *insertP(T puntaje,std::string nombre, int ID, avl_node *n)
   {
-    if(contains(puntaje)){
-      return;
-    }
 
     if (n == nullptr)
     {
       this->count++;
-      avl_node +nuevo = new avl_node(puntaje,nombre,ID);
+      avl_node *nuevo = new avl_node(puntaje,nombre,ID);
       if(!maxNodePtr || puntaje > maxNodePtr->puntaje || (puntaje == maxNodePtr->puntaje && ID < maxNodePtr->ID)){
         maxNodePtr = nuevo;
       }
@@ -171,27 +165,35 @@ private:
 
     if (puntaje < n->puntaje)
     {
-      n->left = insertID(puntaje,nombre,ID, n->left);
+      n->left = insertP(puntaje,nombre,ID, n->left);
     }
     else if (puntaje > n->puntaje)
     {
-      n->right = insertID(puntaje,nombre,ID, n->right);
+      n->right = insertP(puntaje,nombre,ID, n->right);
     }
 
     n->height = 1 + max(height(n->left), height(n->right));
+    n->cantSubarbol = 1;
+    if (n->left){
+      n->cantSubarbol += n->left->cantSubarbol;
+    }
+    if(n->right){
+      n->cantSubarbol += n->right->cantSubarbol;
+    }
+
     n = rebalance(n);
     return n;
   }
 
-  bool contains(T puntaje, avl_node *n){
+  std::string contains(T puntaje, avl_node *n){
     if (n == nullptr)
     {
-      return false;
+      return "jugador_no_encontrado";
     }
 
     if (puntaje == n->puntaje)
     {
-      return true;
+      return n->nombre + " " + std::to_string(n->puntaje);
     }
 
     if (puntaje < n->puntaje)
@@ -207,9 +209,22 @@ private:
     assert(false);
   }
 
-  virtual void RANK(int ID) override
-  {
-    // TODO Auto-generated method stub
+  int rankRec(avl_node *n, int puntaje){
+
+    if(n==nullptr){
+      return 0;
+    }
+    if(n->puntaje < puntaje){
+      return rankRec(n->right,puntaje);
+    }
+    if(n->puntaje >= puntaje){
+      if(n->right){
+        return 1 + n->right->cantSubarbol + rankRec(n->left,puntaje);
+      }
+      else{
+        return 1 + rankRec(n->left,puntaje);
+      }
+    }
   }
 
   
@@ -218,7 +233,7 @@ public:
   avlPuntaje(){
     this->root = nullptr;
   }
-  virtual void insertPuntaje(T puntaje,string nombre,int ID) override
+  virtual void insertPuntaje(T puntaje,std::string nombre,int ID) override
   {
     this->root = insertP(puntaje,nombre, ID, this->root);
   } 
@@ -238,7 +253,7 @@ public:
     return this->count;
   }
 
-  virtual bool contains(T puntaje) override
+  virtual std::string contains(T puntaje) override
   {
     return contains(puntaje, this->root);
   }
@@ -258,15 +273,16 @@ public:
     return maxNode(this->root);
   }
 
-  virtual void RANK(int puntaje) override
+  virtual int RANK(int puntaje) override
   {
-    // TODO Auto-generated method stub
+    return rankRec(this->root, puntaje);
+    
   }
-  virtual maxPuntaje TOP1() override
+  virtual std::string TOP1() override
   {
-    if (!maxNodePtr) {
+    if (!this->maxNodePtr) {
       throw std::runtime_error("No hay jugadores");
     }
-    return {maxNodePtr->puntaje, maxNodePtr->nombre};
+    return this->maxNodePtr->nombre + " " + std::to_string(this->maxNodePtr->puntaje);
   }
 };

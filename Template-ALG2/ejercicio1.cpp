@@ -2,8 +2,8 @@
 #include <string>
 #include <iostream>
 #include <limits>
-#include "avl.cpp"
-#include "avlPuntaje.cpp"
+#include "tads/avl.cpp"
+#include "tads/avlPuntaje.cpp"
 
 using namespace std;
 
@@ -26,24 +26,28 @@ int main()
             cin >> ID;
             cin >> nombre;
             cin >> puntaje;
+            if(!arbolID ->contains(ID)){
             arbolID ->insert(ID,nombre , puntaje);
             arbolPuntaje ->insertPuntaje(puntaje,nombre,ID);
+            }
         }
 
         if(operacion == "FIND"){
             int ID;
             cin >> ID;            
-            arbolID ->contains(ID);
+            cout << arbolID ->FIND(ID) << endl;
+            
         }
 
         if(operacion == "RANK"){
             int puntaje;
             cin >> puntaje;            
-            arbolPuntaje ->RANK(puntaje);
+            int r = arbolPuntaje ->RANK(puntaje);
+            cout << r << endl;
         }
 
         if(operacion == "TOP1"){
-            arbolPuntaje ->TOP1();
+           cout << arbolPuntaje ->TOP1() << endl;
         }
 
         if(operacion == "COUNT"){

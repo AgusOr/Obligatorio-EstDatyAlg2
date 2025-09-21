@@ -4,7 +4,8 @@ template <class T>
 class bstPuntaje
 {
 public:
-  virtual void insertPuntaje(T puntaje,string nombre, int ID) = 0;
+
+  virtual void insertPuntaje(T puntaje,std::string nombre, int ID) = 0;
 
   virtual void remove(T puntaje) = 0;
 
@@ -12,7 +13,7 @@ public:
 
   virtual int size() = 0;
 
-  virtual bool contains(T puntaje) = 0;
+  virtual std::string contains(T puntaje) = 0;
 
   virtual T get(T puntaje) = 0;
 
@@ -20,7 +21,7 @@ public:
 
   virtual T max() = 0;
 
-  virtual void RANK(int puntaje) = 0; 
+  virtual int RANK(int puntaje) = 0; 
 
-  virtual maxPuntaje TOP1() = 0;
+  virtual std::string TOP1() = 0;
 };
