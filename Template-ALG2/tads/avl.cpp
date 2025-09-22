@@ -95,7 +95,7 @@ private:
 
   avl_node *rightRotation(avl_node *z){
     avl_node *y = z->left;
-    avl_node *T3 = z->right;
+    avl_node *T3 = y->right;
 
     y->right = z;
     z->left = T3;

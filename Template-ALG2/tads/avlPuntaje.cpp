@@ -84,8 +84,9 @@ private:
     z->right = T2;
 
     z->height = 1 + max(height(z->left), height(z->right));
-    y->height = 1 + max(height(y->left), height(y->right));
     z->cantSubarbol = cantSubarbol(z);
+    y->height = 1 + max(height(y->left), height(y->right));
+    y->cantSubarbol = cantSubarbol(y);
     
     return y;
   }
@@ -103,8 +104,9 @@ private:
     z->left = T3;
 
     z->height = 1 + max(height(z->left), height(z->right));
-    y->height = 1 + max(height(y->left), height(y->right));
     z->cantSubarbol = cantSubarbol(z);
+    y->height = 1 + max(height(y->left), height(y->right));
+    y->cantSubarbol = cantSubarbol(y);
 
     return y;
   }
@@ -173,13 +175,23 @@ private:
     {
       n->right = insertP(puntaje,nombre,ID, n->right);
     }
+    // a diferencia del arbol por ID, pueden haber puntajes iguales, en esos casos compara por ID
+    else{
+      if(ID < n->ID){
+        n->left = insertP(puntaje,nombre,ID, n->left);
+      }
+      else if(ID > n->ID){
+        n->right = insertP(puntaje,nombre,ID, n->right);
+      }
+    }
 
     n->height = 1 + max(height(n->left), height(n->right));
     n->cantSubarbol = cantSubarbol(n);
     n = rebalance(n);
     return n;
   }
-
+  // funcion que calcula cantidad de nodos del subarbol
+  // se usa cada vez que insertamos y rebalanceamos, necesaria para rank
   int cantSubarbol(avl_node *n){
     if(n == NULL){
       return 0;
@@ -193,7 +205,7 @@ private:
     }
     return cant;
   }
-
+  
   std::string contains(T puntaje, avl_node *n){
     if (n == nullptr)
     {
@@ -217,6 +229,7 @@ private:
     // unreachable code
     assert(false);
   }
+
 
   int rankRec(avl_node *n, int puntaje){
 
