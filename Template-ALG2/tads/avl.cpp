@@ -98,7 +98,7 @@ private:
     avl_node *T3 = z->right;
 
     y->right = z;
-    y->left = T3;
+    z->left = T3;
 
     z->height = 1 + max(height(z->left), height(z->right));
     y->height = 1 + max(height(y->left), height(y->right));

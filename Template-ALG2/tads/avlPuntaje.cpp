@@ -85,6 +85,7 @@ private:
 
     z->height = 1 + max(height(z->left), height(z->right));
     y->height = 1 + max(height(y->left), height(y->right));
+    z->cantSubarbol = cantSubarbol(z);
     
     return y;
   }
@@ -96,13 +97,14 @@ private:
 
   avl_node *rightRotation(avl_node *z){
     avl_node *y = z->left;
-    avl_node *T3 = z->right;
+    avl_node *T3 = y->right;
 
     y->right = z;
-    y->left = T3;
+    z->left = T3;
 
     z->height = 1 + max(height(z->left), height(z->right));
     y->height = 1 + max(height(y->left), height(y->right));
+    z->cantSubarbol = cantSubarbol(z);
 
     return y;
   }
@@ -173,16 +175,23 @@ private:
     }
 
     n->height = 1 + max(height(n->left), height(n->right));
-    n->cantSubarbol = 1;
-    if (n->left){
-      n->cantSubarbol += n->left->cantSubarbol;
-    }
-    if(n->right){
-      n->cantSubarbol += n->right->cantSubarbol;
-    }
-
+    n->cantSubarbol = cantSubarbol(n);
     n = rebalance(n);
     return n;
+  }
+
+  int cantSubarbol(avl_node *n){
+    if(n == NULL){
+      return 0;
+    }    
+    int cant = 1;
+    if (n->left){
+      cant += n->left->cantSubarbol;
+    }
+    if(n->right){
+      cant += n->right->cantSubarbol;
+    }
+    return cant;
   }
 
   std::string contains(T puntaje, avl_node *n){
