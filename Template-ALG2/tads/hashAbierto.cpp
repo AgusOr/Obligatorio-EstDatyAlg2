@@ -1,8 +1,8 @@
 #pragma once
 
-#include "./map.cpp"
-#include "./pair.cpp"
-#include "../C++/functions/hash/hash_func.cpp"
+#include "map.cpp"
+#include "pair.cpp"
+//#include "../C++/functions/hash/hash_func.cpp"
 #include "./linked_list.cpp"
 
 template <class K, class V>
