@@ -5,6 +5,7 @@
 #include <iostream>
 #include "ListImp.cpp"
 
+
 template <class T>
 class min_heap : public heap<T>
 {
@@ -15,7 +16,7 @@ private:
   int tope;
 
   T elem(int index) {
-    assert(this->cantElem >=1);
+    assert(("assert en elem(): cantElem >=1",this->cantElem >= 1));
     return heap[index]->get(0);
   }
 
@@ -35,8 +36,6 @@ private:
     }
     else{
       if (elem(pos) < elem(parent)){
-        //arr[pos] = parentPair;
-        //arr[parent] = p;
         swap(pos, parent);
         siftUp(parent);
       }
@@ -56,8 +55,6 @@ private:
       hijoMenor = hijoDer;
     }
     if(elem(parent) > elem(hijoMenor)){
-      //arr[pos] = hijoMayorPair;
-      //arr[hijoMayor] = parent;
       swap(pos, hijoMenor);
       siftDown(hijoMenor);
       }
@@ -75,6 +72,9 @@ public:
 
   virtual void push(List<T>* nuevaLista) override
   {
+    if(nuevaLista->isEmpty()){
+      return;
+    }
     heap[tope] = nuevaLista;
     siftUp(tope);
     this->cantElem++;
@@ -83,26 +83,21 @@ public:
 
   virtual void pop() override
   {
-    assert(this->cantElem >= 1);
-    swap(1,tope-1);
-    if(!heap[tope-1]->isEmpty()){
-      heap[tope-1]->removeAt(0);
-      
-    }
-    if(heap[tope-1]->isEmpty()){
-      heap[tope-1] =heap[cantElem];
-      heap[cantElem] = NULL;
+    assert(("assert en pop(): cantElem >=1",this->cantElem >= 1));
+    heap[1]->removeAt(0);
+    if(heap[1]->isEmpty()){
+      swap(1,tope-1);
+      delete heap[tope-1];
+      heap[tope-1] = NULL;
       cantElem--;
       tope--;
     }
-    
     siftDown(1);
-    siftUp(tope-1);
   }
 
   virtual T top() override
   {
-    assert(this->cantElem >= 1);
+    assert(("assert en top(): cantElem >=1",this->cantElem >= 1));
     return heap[1]->get(0);
   }
 

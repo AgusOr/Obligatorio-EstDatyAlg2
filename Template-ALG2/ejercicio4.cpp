@@ -25,8 +25,8 @@ int main()
         heap.push(lista);
     }
     while(!heap.isEmpty()){
-        heap.pop();
         cout << heap.top() << endl;
+        heap.pop();
     }
     cout << endl;
 }
